@@ -1,8 +1,3 @@
-export type TUser = {
-    id: string;
-    email: string;
-    fullname: string;
-    password: string;
-}
+import User from "../entities/User.entity";
 
-export type TUserCreation = Omit<TUser, "id">
+export type TUserCreation = Omit<User, "id">

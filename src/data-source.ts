@@ -22,9 +22,10 @@ const buildSettings = (): DataSourceOptions => {
     const username = getEnv("DB_USERNAME");
     const password = getEnv("DB_PASSWORD");
     const host = getEnv("DB_HOST");
+    const type = getEnv("DB_TYPE");
 
     return {
-        type: "postgres",
+        type: type as "mssql" | "postgres",
         host,
         port,
         username,
@@ -33,6 +34,9 @@ const buildSettings = (): DataSourceOptions => {
         logging: true,
         entities: [entitiesPath],
         migrations: [migrationPath],
+        options: {
+            trustServerCertificate: true
+        }
     };
 }
 

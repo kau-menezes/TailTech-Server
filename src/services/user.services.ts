@@ -7,7 +7,9 @@ import AppError from "../errors";
 export const createUserService = async (payload:TUserCreation): Promise<User> => {
     const repo:Repository<User> = AppDataSource.getRepository(User);
     const user = repo.create(payload);
-    return await repo.save(user)
+    await repo.save(user)
+    user.password = undefined;
+    return user;
 }
 
 export const getUserService = async (id:string): Promise<User> => {

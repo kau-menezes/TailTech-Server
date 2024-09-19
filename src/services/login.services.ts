@@ -15,11 +15,12 @@ interface ILoginResponse {
 
 export const loginService = async ({ email, password }:ILoginPayload): Promise<ILoginResponse> => {
 
-    const repo = AppDataSource.getMongoRepository(User);
+    const repo = AppDataSource.getRepository(User);
 
     const user = await repo.findOne({ 
         where: { email }, 
-        relations: { pets: true } 
+        relations: { pets: true },
+        select: { password: false }
     });
     if(!user) throw new AppError("User not found", 404);
 

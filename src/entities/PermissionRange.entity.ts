@@ -7,11 +7,17 @@ export default class PermissionRange {
     @PrimaryGeneratedColumn("uuid")
     id?: string;
 
-    @Column({ type: "timestamp" })
-    beggining?: Timestamp
+    @Column({ type: "int" })
+    begginingHour?: number;
 
-    @Column({ type: "timestamp" })
-    finish?: Timestamp
+    @Column({ type: "int" })
+    begginingMinute?: number;
+
+    @Column({ type: "int" })
+    finishHour?: number;
+
+    @Column({ type: "int" })
+    finishMinute?: number;
 
     @ManyToOne(() => DoorPermission)
     doorPermission?: DoorPermission
