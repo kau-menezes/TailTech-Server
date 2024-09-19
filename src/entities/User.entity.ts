@@ -18,7 +18,6 @@ export default class User {
     password?: string;
     
     @OneToMany(() => Pet, (pet) => pet.user)
-    @JoinColumn()
     pets?: Pet[];
 
 

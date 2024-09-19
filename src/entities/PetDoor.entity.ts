@@ -11,6 +11,5 @@ export default class PetDoor {
     nickname?: string;
 
     @ManyToOne(() => User)
-    @JoinColumn()
     user?: User; 
 }
