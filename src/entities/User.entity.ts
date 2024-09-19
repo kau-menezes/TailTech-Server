@@ -19,5 +19,4 @@ export default class User {
     @OneToMany(() => Pet, (pet) => pet.user)
     @JoinColumn()
     pets?: Pet[];
-
 }

@@ -14,6 +14,5 @@ export default class PermissionRange {
     finish?: Timestamp
 
     @ManyToOne(() => DoorPermission)
-    @JoinColumn()
     doorPermission?: DoorPermission
 }
