@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import Pet from "./Pet.entity";
+import { hashSync } from "bcryptjs";
 
 @Entity("users")
 export default class User {
@@ -19,4 +20,10 @@ export default class User {
     @OneToMany(() => Pet, (pet) => pet.user)
     @JoinColumn()
     pets?: Pet[];
+
+
+    @BeforeInsert()
+    public hashPassword() {
+        this.password = hashSync(this.password!);
+    }
 }
