@@ -1,4 +1,3 @@
-export type TPet = {
-    id: string;
-    name: string;   
-}
+import Pet from "../entities/Pet.entity";
+
+export type TPetCreation = Omit<Pet, "id">;
