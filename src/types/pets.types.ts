@@ -1,3 +1,5 @@
 import Pet from "../entities/Pet.entity";
 
-export type TPetCreation = Omit<Pet, "id">;
+export type TPetCreation = Pet;
+
+export type TPetUpdate = Omit<TPetCreation, "id">;
