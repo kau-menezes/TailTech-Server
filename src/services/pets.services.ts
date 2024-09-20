@@ -29,7 +29,7 @@ export const getPetService = async (id:string): Promise<Pet> => {
     return pet;
 }
 
-export const updatePetService = async (id:string, payload:TPetUpdate, picture?:string): Promise<void> => {
+export const updatePetService = async (id:string, payload:TPetUpdate): Promise<void> => {
 
     const repo = AppDataSource.getRepository(Pet);
 
@@ -37,7 +37,16 @@ export const updatePetService = async (id:string, payload:TPetUpdate, picture?:s
         throw new AppError("Pet not found", 404);
 
     await repo.update({ id }, payload);
-    if(picture) await repo.update({ id }, { picture });
+}
+
+export const updatePetPictureService = async (id:string, picture?:string): Promise<void> => {
+
+    const repo = AppDataSource.getRepository(Pet);
+
+    if(!await repo.existsBy({ id }))
+        throw new AppError("Pet not found", 404);
+
+    await repo.update({ id }, { picture });
 }
 
 export const deletePetService = async (id:string): Promise<void> => {
