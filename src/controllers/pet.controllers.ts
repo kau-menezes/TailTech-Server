@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 import { createPetService, deletePetService, getPetService, updatePetService } from "../services/pets.services";
 
 export const createPetController = async (req:Request, res:Response) => {
-    const service = await createPetService(req.params.userId, req.body);
+    console.log("body:")
+    console.log(req.body)
+    const service = await createPetService(res.locals.userId, req.body, req.file?.path);
     return res.status(201).json(service);
 }
 
@@ -12,7 +14,7 @@ export const getPetController = async (req:Request, res:Response) => {
 }
 
 export const updatePetController = async (req:Request, res:Response) => {
-    await updatePetService(req.params.petId, req.body);
+    await updatePetService(req.params.petId, req.body, req.file?.path);
     return res.status(204).send();
 }   
 

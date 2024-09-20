@@ -132,3 +132,6 @@ dist
 
 # Migrations
 src/migrations
+
+# Uploads
+uploads

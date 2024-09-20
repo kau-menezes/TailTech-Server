@@ -14,7 +14,7 @@ export default class User {
     @Column({ type: "varchar", length: 255 })
     email?: string;
 
-    @Column({ type: "varchar", length: 500 })
+    @Column({ type: "varchar", length: 500, select: false })
     password?: string;
     
     @OneToMany(() => Pet, (pet) => pet.user)

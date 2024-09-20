@@ -4,7 +4,7 @@ import User from "../entities/User.entity";
 import AppError from "../errors";
 import { TPetCreation, TPetUpdate } from "../types/pets.types";
 
-export const createPetService = async (userId:string, payload:TPetCreation): Promise<Pet> => {
+export const createPetService = async (userId:string, payload:TPetCreation, picture?:string|undefined): Promise<Pet> => {
 
     const petRepo = AppDataSource.getRepository(Pet);
     const userRepo = AppDataSource.getRepository(User);
@@ -14,6 +14,7 @@ export const createPetService = async (userId:string, payload:TPetCreation): Pro
 
     const pet = petRepo.create(payload);
     pet.user = user;
+    if(picture) pet.picture = picture;
 
     return await petRepo.save(pet);
 }
@@ -28,7 +29,7 @@ export const getPetService = async (id:string): Promise<Pet> => {
     return pet;
 }
 
-export const updatePetService = async (id:string, payload:TPetUpdate): Promise<void> => {
+export const updatePetService = async (id:string, payload:TPetUpdate, picture?:string): Promise<void> => {
 
     const repo = AppDataSource.getRepository(Pet);
 
@@ -36,6 +37,7 @@ export const updatePetService = async (id:string, payload:TPetUpdate): Promise<v
         throw new AppError("Pet not found", 404);
 
     await repo.update({ id }, payload);
+    if(picture) await repo.update({ id }, { picture });
 }
 
 export const deletePetService = async (id:string): Promise<void> => {

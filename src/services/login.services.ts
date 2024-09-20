@@ -19,19 +19,18 @@ export const loginService = async ({ email, password }:ILoginPayload): Promise<I
 
     const user = await repo.findOne({ 
         where: { email }, 
-        relations: { pets: true },
-        select: { password: false }
+        relations: { pets: true }
     });
     if(!user) throw new AppError("User not found", 404);
 
-    if(!compareSync(password, user.password!))
+    if(user.password && !compareSync(password, user.password))
         throw new AppError("Password does not match", 401)
 
     const token = sign( {},
         String(process.env.SECRET_KEY),
         {
             expiresIn: String(process.env.EXPIRES_IN),
-            subject: user.email
+            subject: user.id
         }
     )
 

@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
 import User from "./User.entity";
+import { v4 as uuid } from "uuid";
 
 @Entity("pets")
 export default class Pet {
@@ -15,4 +16,11 @@ export default class Pet {
 
     @ManyToOne(() => User, { cascade: true })
     user?: User;
+
+    @BeforeInsert()
+    ensureId() {
+        if(!this.id) {
+            this.id = uuid();
+        }
+    }
 }
