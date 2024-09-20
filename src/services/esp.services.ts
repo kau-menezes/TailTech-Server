@@ -31,7 +31,7 @@ export const readPetTag = async (mac:string, hash:string): Promise<void> => {
         if(!door.user) throw new AppError("Door doesn't have a owner yet.");
         
         const numberOfPets = await petRepo.countBy({ user: door!.user })
-        await createPetService(door.user!.id!, { name: `Pet ${numberOfPets}` })
+        await createPetService(door.user!.id!, { name: `Pet ${numberOfPets + 1}` })
         
         throw new AppError("New Pet created, access app for details.");
     }
