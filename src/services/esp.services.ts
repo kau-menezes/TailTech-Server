@@ -22,7 +22,7 @@ export const readPetTagService = async (mac:string, hash:string): Promise<void> 
     const petRepo = AppDataSource.getRepository(Pet);
     const doorRepo = AppDataSource.getRepository(PetDoor);
     
-    const door = await doorRepo.findOneBy({ mac });
+    const door = await doorRepo.findOne({ where: { mac }, relations: { user: true } });
     const pet = await petRepo.findOneBy({ id: hash })
 
     if(!door) throw new AppError("Door not found.", 404);
@@ -32,7 +32,7 @@ export const readPetTagService = async (mac:string, hash:string): Promise<void> 
         const numberOfPets = await petRepo.countBy({ user: door!.user })
         await createPetService(door.user!.id!, { name: `Pet ${numberOfPets + 1}`, id: hash })
         
-        throw new AppError("New Pet created, access app for details.");
+        throw new AppError("New Pet created, access app for details.", 401);
     }
 
     const permissionRepo = AppDataSource.getRepository(DoorPermission);
