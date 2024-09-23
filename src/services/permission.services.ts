@@ -3,6 +3,7 @@ import DoorPermission from "../entities/DoorPermission.entity";
 import Pet from "../entities/Pet.entity";
 import PetDoor from "../entities/PetDoor.entity";
 import AppError from "../errors";
+import { TPermissionRangeCreation } from "../types/permission.types";
 
 export const togglePermissionService = async (petId:string, petDoorId:string) => {
 
@@ -33,4 +34,8 @@ export const toggleFreeAccessService = async (id:string) => {
     await repo.save(door);
 }
 
-// export const createPermissionRangeService = async (petId:string)
+export const createPermissionRangeService = async (
+    petId:string, petDoorId:string, payload:TPermissionRangeCreation
+) => {
+
+}
