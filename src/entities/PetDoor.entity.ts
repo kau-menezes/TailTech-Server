@@ -4,8 +4,8 @@ import User from "./User.entity";
 @Entity("pet_doors")
 export default class PetDoor {
     
-    @PrimaryColumn({ type: "varchar", length: 50 })
-    mac?: string;
+    @PrimaryColumn({ type: "varchar" })
+    id?: string;
 
     @Column({ type: "char", length: 6 })
     code?: string;

@@ -6,23 +6,23 @@ import { createPetService } from "./pets.services";
 import DoorPermission from "../entities/DoorPermission.entity";
 import PermissionRange from "../entities/PermissionRange.entity";
 
-export const ensureEspRegister = async (mac:string) => {
+export const ensureEspRegister = async (id:string) => {
 
     const repo = AppDataSource.getRepository(PetDoor);
 
-    const door = await repo.findOneBy({ mac });
+    const door = await repo.findOneBy({ id: id });
     if(door) return;
 
-    const newDoor = repo.create({ mac });
+    const newDoor = repo.create({ id: id });
     await repo.save(newDoor);
 }
 
-export const readPetTagService = async (mac:string, hash:string): Promise<void> => {
+export const readPetTagService = async (id:string, hash:string): Promise<void> => {
 
     const petRepo = AppDataSource.getRepository(Pet);
     const doorRepo = AppDataSource.getRepository(PetDoor);
     
-    const door = await doorRepo.findOne({ where: { mac }, relations: { user: true } });
+    const door = await doorRepo.findOne({ where: { id }, relations: { user: true } });
     const pet = await petRepo.findOneBy({ id: hash })
 
     if(!door) throw new AppError("Door not found.", 404);

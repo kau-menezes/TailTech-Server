@@ -1,6 +1,7 @@
 import { BeforeInsert, Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import Pet from "./Pet.entity";
 import { hashSync } from "bcryptjs";
+import PetDoor from "./PetDoor.entity";
 
 @Entity("users")
 export default class User {
@@ -19,6 +20,9 @@ export default class User {
     
     @OneToMany(() => Pet, (pet) => pet.user)
     pets?: Pet[];
+
+    @OneToMany(() => PetDoor, (door) => door.user)
+    doors?: PetDoor[];
 
 
     @BeforeInsert()
