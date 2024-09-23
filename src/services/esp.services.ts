@@ -34,9 +34,9 @@ export const readPetTagService = async (id:string, hash:string): Promise<void> =
         
         throw new AppError("New Pet created, access app for details.", 401);
     }
-
+    
     const permissionRepo = AppDataSource.getRepository(DoorPermission);
-
+    
     const permission = await permissionRepo.findOneBy({ pet: pet, petDoor: door });
     if(!permission) throw new AppError("Pet does not have permission", 403);
     

@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn, RelationId } from "typeorm";
 import User from "./User.entity";
 
 @Entity("pet_doors")
@@ -7,7 +7,7 @@ export default class PetDoor {
     @PrimaryColumn({ type: "varchar" })
     id?: string;
 
-    @Column({ type: "char", length: 6 })
+    @Column({ type: "char", length: 6, select: false })
     code?: string;
 
     @Column({ type: "varchar", length: 50, nullable: true })
@@ -15,7 +15,6 @@ export default class PetDoor {
 
     @ManyToOne(() => User, { nullable: true })
     user?: User;
-
 
     @BeforeInsert()
     public getCode() {

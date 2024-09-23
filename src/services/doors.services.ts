@@ -19,22 +19,26 @@ export const redeemDoorService = async (code:string, userId:string) => {
     return await doorRepo.save(door);
 }
 
-export const updateDoorService = async (id:string, payload:TDoorUpdate) => {
+export const updateDoorService = async (userId:string, doorId:string, payload:TDoorUpdate) => {
 
-    const repo = AppDataSource.getRepository(PetDoor);
+    const doorRepo = AppDataSource.getRepository(PetDoor);
+    const userRepo = AppDataSource.getRepository(User);
 
-    if(!repo.existsBy({ id })) 
+    const user = await userRepo.findOneBy({ id: userId });
+    if(!user) throw new AppError("User not found");
+
+    if(!doorRepo.existsBy({ id: doorId, user }))
         throw new AppError("Door not found", 404);
     
-    await repo.update({ id }, payload);
+    await doorRepo.update({ id: doorId }, payload);
 }
 
-export const getDoorsService = async (userId:string): Promise<PetDoor[]> => {
+export const getDoorsService = async (id:string): Promise<PetDoor[]> => {
 
     const userRepo = AppDataSource.getRepository(User);
 
     const user = await userRepo.findOne({ 
-        where: { id: userId },
+        where: { id },
         relations: { doors: true } 
     })
     if(!user) throw new AppError("User not found");
