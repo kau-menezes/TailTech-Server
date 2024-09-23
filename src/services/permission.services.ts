@@ -32,3 +32,5 @@ export const toggleFreeAccessService = async (id:string) => {
     door.freeAccess = !door.freeAccess;
     await repo.save(door);
 }
+
+// export const createPermissionRangeService = async (petId:string)

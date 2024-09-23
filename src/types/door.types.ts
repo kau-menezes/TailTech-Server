@@ -1,3 +1,3 @@
 import PetDoor from "../entities/PetDoor.entity";
 
-export type TDoorUpdate = Pick<PetDoor, "nickname">;
+export type TDoorUpdate = Required<Pick<PetDoor, "nickname">>;

@@ -1,3 +1,3 @@
 import User from "../entities/User.entity";
 
-export type TUserCreation = Omit<User, "id">
+export type TUserCreation = Required<Omit<User, "id">>
