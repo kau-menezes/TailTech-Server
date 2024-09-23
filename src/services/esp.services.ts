@@ -26,6 +26,8 @@ export const readPetTagService = async (id:string, hash:string): Promise<void> =
     const pet = await petRepo.findOneBy({ id: hash })
 
     if(!door) throw new AppError("Door not found.", 404);
+    if(door.freeAccess) return;
+
     if(!pet) {
         if(!door.user) throw new AppError("Door doesn't have a owner yet.");
         

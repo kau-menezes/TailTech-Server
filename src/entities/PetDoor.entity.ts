@@ -1,5 +1,6 @@
 import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn, RelationId } from "typeorm";
 import User from "./User.entity";
+import { boolean } from "zod";
 
 @Entity("pet_doors")
 export default class PetDoor {
@@ -12,6 +13,9 @@ export default class PetDoor {
 
     @Column({ type: "varchar", length: 50, nullable: true })
     nickname?: string;
+
+    @Column({ type: "boolean", default: false })
+    freeAccess?: boolean;
 
     @ManyToOne(() => User, { nullable: true })
     user?: User;

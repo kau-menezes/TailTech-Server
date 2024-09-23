@@ -21,3 +21,14 @@ export const togglePermissionService = async (petId:string, petDoorId:string) =>
     else 
         await permissionRepo.save({ pet, petDoor })
 }
+
+export const toggleFreeAccessService = async (id:string) => {
+
+    const repo = AppDataSource.getRepository(PetDoor);
+
+    const door = await repo.findOneBy({ id });
+    if(!door) throw new AppError("Door not found", 404);
+    
+    door.freeAccess = !door.freeAccess;
+    await repo.save(door);
+}
