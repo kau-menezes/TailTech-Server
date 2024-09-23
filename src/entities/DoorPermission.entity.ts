@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, ManyToOne, PrimaryGeneratedColumn, RelationId } from "typeorm";
 import Pet from "./Pet.entity";
 import PetDoor from "./PetDoor.entity";
 
@@ -13,5 +13,4 @@ export default class DoorPermission {
 
     @ManyToOne(() => PetDoor)
     petDoor?: PetDoor;
-
 }

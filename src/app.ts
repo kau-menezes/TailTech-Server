@@ -13,6 +13,7 @@ import e from "express";
 import path from "path";
 import espRouter from "./routers/esp.routes";
 import doorRouter from "./routers/door.routes";
+import permissionRouter from "./routers/permission.routes";
 
 
 const app = express();
@@ -28,6 +29,7 @@ app.use("/api/login", loginRouter);
 app.use("/api/pets", petRouter);
 app.use("/api/esp", espRouter);
 app.use("/api/doors", doorRouter);
+app.use("/api/permissions", permissionRouter);
 
 app.use(handleError);
 
