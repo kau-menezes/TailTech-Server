@@ -6,6 +6,6 @@ const doorRouter = Router();
 
 doorRouter.get("", authenticate, getDoorsController)
 doorRouter.get("/:code", authenticate, redeemDoorController);
-doorRouter.patch("/:mac", authenticate, updateDoorController);
+doorRouter.patch("/:id", authenticate, updateDoorController);
 
 export default doorRouter;

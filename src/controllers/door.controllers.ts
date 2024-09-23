@@ -7,7 +7,7 @@ export const redeemDoorController = async (req:Request, res:Response) => {
 }
 
 export const updateDoorController = async (req:Request, res:Response) => {
-    await updateDoorService(req.params.mac, req.body);
+    await updateDoorService(req.params.id, req.body);
     return res.status(204).send();
 }
 
