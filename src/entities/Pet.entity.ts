@@ -1,26 +1,26 @@
-import { BeforeInsert, Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import User from "./User.entity";
-import { v4 as uuid } from "uuid";
+import DoorPermission from "./DoorPermission.entity";
 
 @Entity("pets")
 export default class Pet {
 
-    @PrimaryColumn({ type: "varchar", length: 255 })
-    id?: string;
+    @PrimaryGeneratedColumn("uuid")
+    petId?: string;
 
     @Column({ type: "varchar", length: 255 })
     name?: string;
 
     @Column({ type: "varchar", length: 255, nullable: true })
-    picture?: string;
+    pictureUrl?: string;
 
-    @ManyToOne(() => User, { cascade: true })
+    @Column({ type: "varchar", length: 255 })
+    userId?: string;
+
+    @ManyToOne(() => User, (u) => u.pets, { cascade: true, onDelete: "CASCADE" })
+    @JoinColumn({ name: "userId" })
     user?: User;
 
-    @BeforeInsert()
-    ensureId() {
-        if(!this.id) {
-            this.id = uuid();
-        }
-    }
+    @OneToMany(() => DoorPermission, (dp) => dp.pet, { cascade: true, onDelete: "CASCADE" })
+    permissions?: DoorPermission[];
 }

@@ -13,7 +13,7 @@ export const createUserService = async (payload:TUserCreation): Promise<User> =>
 
 export const getUserService = async (id:string): Promise<User> => {
     const repo = AppDataSource.getRepository(User);
-    const user = await repo.findOne({ where: { id }, relations: { pets: true } })
+    const user = await repo.findOne({ where: { userId: id }, relations: { pets: true } })
     if(!user) throw new AppError("User not found", 404);
     return user;
 }

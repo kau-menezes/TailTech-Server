@@ -12,7 +12,7 @@ export const redeemDoorService = async (code:string, userId:string) => {
     const door = await doorRepo.findOneBy({ code });
     if(!door) throw new AppError("Invalid code", 404);
 
-    const user = await userRepo.findOneBy({ id: userId });
+    const user = await userRepo.findOneBy({ userId: userId });
     if(!user) throw new AppError("User not found", 404);
 
     door.user = user;
@@ -24,13 +24,13 @@ export const updateDoorService = async (userId:string, doorId:string, payload:TD
     const doorRepo = AppDataSource.getRepository(PetDoor);
     const userRepo = AppDataSource.getRepository(User);
 
-    const user = await userRepo.findOneBy({ id: userId });
+    const user = await userRepo.findOneBy({ userId: userId });
     if(!user) throw new AppError("User not found");
 
-    if(!doorRepo.existsBy({ id: doorId, user }))
+    if(!doorRepo.existsBy({ petDoorId: doorId, user }))
         throw new AppError("Door not found", 404);
     
-    await doorRepo.update({ id: doorId }, payload);
+    await doorRepo.update({ petDoorId: doorId }, payload);
 }
 
 export const getDoorsService = async (id:string): Promise<PetDoor[]> => {
@@ -38,7 +38,7 @@ export const getDoorsService = async (id:string): Promise<PetDoor[]> => {
     const userRepo = AppDataSource.getRepository(User);
 
     const user = await userRepo.findOne({ 
-        where: { id },
+        where: { userId: id },
         relations: { doors: true } 
     })
     if(!user) throw new AppError("User not found");

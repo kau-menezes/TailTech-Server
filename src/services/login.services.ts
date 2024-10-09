@@ -30,7 +30,7 @@ export const loginService = async ({ email, password }:ILoginPayload): Promise<I
         String(process.env.SECRET_KEY),
         {
             expiresIn: String(process.env.EXPIRES_IN),
-            subject: user.id
+            subject: user.userId
         }
     )
 

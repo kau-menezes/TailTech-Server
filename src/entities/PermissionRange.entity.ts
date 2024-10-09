@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Timestamp } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import DoorPermission from "./DoorPermission.entity";
 
 @Entity("permission_ranges")
@@ -7,18 +7,22 @@ export default class PermissionRange {
     @PrimaryGeneratedColumn("uuid")
     id?: string;
 
-    @Column({ type: "int" })
+    @Column({ type: "smallint" })
     begginingHour?: number;
 
-    @Column({ type: "int" })
+    @Column({ type: "smallint" })
     begginingMinute?: number;
 
-    @Column({ type: "int" })
-    finishHour?: number;
+    @Column({ type: "smallint" })
+    endHour?: number;
 
-    @Column({ type: "int" })
-    finishMinute?: number;
+    @Column({ type: "smallint" })
+    endMinute?: number;
 
-    @ManyToOne(() => DoorPermission)
-    doorPermission?: DoorPermission
+    @Column()
+    doorPermissionId?: string;
+
+    @ManyToOne(() => DoorPermission, (dp) => dp.ranges, { cascade: true, onDelete: "CASCADE" })
+    @JoinColumn({ name: "doorPermissionId" })
+    doorPermission?: DoorPermission;
 }

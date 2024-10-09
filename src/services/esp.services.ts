@@ -10,10 +10,10 @@ export const ensureEspRegister = async (id:string) => {
 
     const repo = AppDataSource.getRepository(PetDoor);
 
-    const door = await repo.findOneBy({ id: id });
+    const door = await repo.findOneBy({ petDoorId: id });
     if(door) return;
 
-    const newDoor = repo.create({ id: id });
+    const newDoor = repo.create({ petDoorId: id });
     await repo.save(newDoor);
 }
 
@@ -22,7 +22,7 @@ export const readPetTagService = async (id:string, hash:string): Promise<void> =
     const petRepo = AppDataSource.getRepository(Pet);
     const doorRepo = AppDataSource.getRepository(PetDoor);
     
-    const door = await doorRepo.findOne({ where: { id }, relations: { user: true } });
+    const door = await doorRepo.findOne({ where: { petDoorId: id }, relations: { user: true } });
     const pet = await petRepo.findOneBy({ id: hash })
 
     if(!door) throw new AppError("Door not found.", 404);
@@ -32,7 +32,7 @@ export const readPetTagService = async (id:string, hash:string): Promise<void> =
         if(!door.user) throw new AppError("Door doesn't have a owner yet.");
         
         const numberOfPets = await petRepo.countBy({ user: door!.user })
-        await createPetService(door.user!.id!, { name: `Pet ${numberOfPets + 1}`, id: hash })
+        await createPetService(door.user!.userId!, { name: `Pet ${numberOfPets + 1}`, id: hash })
         
         throw new AppError("New Pet created, access app for details.", 401);
     }
@@ -59,8 +59,8 @@ export const readPetTagService = async (id:string, hash:string): Promise<void> =
                 (range.begginingHour! == hours && range.begginingMinute! <= minutes)
             ) &&
             (   
-                range.finishHour! > hours ||
-                (range.finishHour! == hours && range.finishMinute! >= minutes)
+                range.endHour! > hours ||
+                (range.endHour! == hours && range.endMinute! >= minutes)
             )
         ) return;
     }

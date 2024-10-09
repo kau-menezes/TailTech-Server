@@ -9,7 +9,7 @@ export const createPetService = async (userId:string, payload:TPetCreation, pict
     const petRepo = AppDataSource.getRepository(Pet);
     const userRepo = AppDataSource.getRepository(User);
 
-    const user = await userRepo.findOne({ where: { id: userId } });
+    const user = await userRepo.findOne({ where: { userId: userId } });
     if(!user) throw new AppError("User not found", 404);
 
     const pet = petRepo.create(payload);

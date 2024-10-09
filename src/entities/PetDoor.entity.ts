@@ -1,35 +1,26 @@
-import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn, RelationId } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import User from "./User.entity";
-import { boolean } from "zod";
+import DoorPermission from "./DoorPermission.entity";
 
 @Entity("pet_doors")
 export default class PetDoor {
     
-    @PrimaryColumn({ type: "varchar" })
-    id?: string;
+    @PrimaryGeneratedColumn("uuid")
+    petDoorId?: string;
 
-    @Column({ type: "char", length: 6, select: false })
-    code?: string;
-
-    @Column({ type: "varchar", length: 50, nullable: true })
+    @Column({ type: "varchar", length: 50 })
     nickname?: string;
 
     @Column({ type: "boolean", default: false })
     freeAccess?: boolean;
 
-    @ManyToOne(() => User, { nullable: true })
+    @Column({ type: "varchar", length: 255 })
+    userId?: string;
+
+    @ManyToOne(() => User, (u) => u.doors, { cascade: true, onDelete: "CASCADE" })
+    @JoinColumn({ name: "userId" })
     user?: User;
 
-    @BeforeInsert()
-    public getCode() {
-        if(this.code) return this.code;
-
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        this.code = '';
-        for (let i = 0; i < 6; i++) {
-            const randomIndex = Math.floor(Math.random() * chars.length);
-            this.code += chars[randomIndex];
-        }
-        return this.code;
-    }
+    @OneToMany(() => DoorPermission, (dp) => dp.petDoor, { cascade: true, onDelete: "CASCADE" })
+    permissions?: DoorPermission[];
 }
