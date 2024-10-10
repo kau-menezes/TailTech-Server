@@ -1,60 +1,29 @@
 import AppDataSource from "../data-source";
 import Pet from "../entities/Pet.entity";
-import User from "../entities/User.entity";
 import AppError from "../errors";
-import { TPetCreation, TPetUpdate } from "../types/pets.types";
+import { IPetUpdate } from "../schemas/pets.schemas";
 
-export const createPetService = async (userId:string, payload:TPetCreation, picture?:string|undefined): Promise<Pet> => {
 
-    const petRepo = AppDataSource.getRepository(Pet);
-    const userRepo = AppDataSource.getRepository(User);
-
-    const user = await userRepo.findOne({ where: { userId: userId } });
-    if(!user) throw new AppError("User not found", 404);
-
-    const pet = petRepo.create(payload);
-    pet.user = user;
-    if(picture) pet.picture = picture;
-
-    return await petRepo.save(pet);
+export const getPetsService = async (userId:string) => {
+    return await AppDataSource.getRepository(Pet).findBy({ userId });
 }
 
-export const getPetService = async (id:string): Promise<Pet> => {
-
+export const updatePetService = async (petId:string, userId:string, payload:IPetUpdate, pictureUrl?:string) => {
     const repo = AppDataSource.getRepository(Pet);
 
-    const pet = await repo.findOneBy({ id });
+    const pet = await repo.findOneBy({ petId, userId });
     if(!pet) throw new AppError("Pet not found", 404);
 
-    return pet;
+    if(pictureUrl) pet.pictureUrl = pictureUrl;
+    await repo.save({ ...pet, ...payload });
 }
 
-export const updatePetService = async (id:string, payload:TPetUpdate): Promise<void> => {
-
-    const repo = AppDataSource.getRepository(Pet);
-
-    if(!await repo.existsBy({ id }))
-        throw new AppError("Pet not found", 404);
-
-    await repo.update({ id }, payload);
-}
-
-export const updatePetPictureService = async (id:string, picture?:string): Promise<void> => {
-
-    const repo = AppDataSource.getRepository(Pet);
-
-    if(!await repo.existsBy({ id }))
-        throw new AppError("Pet not found", 404);
-
-    await repo.update({ id }, { picture });
-}
-
-export const deletePetService = async (id:string): Promise<void> => {
+export const deletePetService = async (petId:string, userId:string) => {
     
     const repo = AppDataSource.getRepository(Pet);
 
-    if(!await repo.existsBy({ id }))
-        throw new AppError("Pet not found", 404);
+    const pet = await repo.findOneBy({ petId, userId });
+    if(!pet) throw new AppError("Pet not found", 404);
 
-    await repo.delete({ id });
+    await repo.remove(pet);
 }

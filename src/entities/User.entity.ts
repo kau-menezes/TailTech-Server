@@ -10,7 +10,7 @@ export default class User {
     @PrimaryGeneratedColumn("uuid")
     userId?: string;
 
-    @Column({ type: "varchar", length: 255 })
+    @Column({ type: "varchar", length: 25 })
     username?: string;
 
     @Column({ type: "varchar", length: 255 })

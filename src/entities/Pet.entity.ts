@@ -1,18 +1,18 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 import User from "./User.entity";
 import DoorPermission from "./DoorPermission.entity";
 
 @Entity("pets")
 export default class Pet {
 
-    @PrimaryGeneratedColumn("uuid")
+    @PrimaryColumn()
     petId?: string;
 
-    @Column({ type: "varchar", length: 255 })
-    name?: string;
+    @Column({ type: "varchar", length: 255, nullable: true })
+    name?: string | null;
 
     @Column({ type: "varchar", length: 255, nullable: true })
-    pictureUrl?: string;
+    pictureUrl?: string | null;
 
     @Column({ type: "varchar", length: 255 })
     userId?: string;

@@ -1,47 +1,20 @@
 import AppDataSource from "../data-source";
 import PetDoor from "../entities/PetDoor.entity";
-import User from "../entities/User.entity";
 import AppError from "../errors";
-import { TDoorUpdate } from "../types/door.types";
+import { IPetDoorUpdate } from "../schemas/doors.schemas";
 
-export const redeemDoorService = async (code:string, userId:string) => {
-    
+
+export const updateDoorService = async (userId:string, petDoorId:string, payload:IPetDoorUpdate) => {
     const doorRepo = AppDataSource.getRepository(PetDoor);
-    const userRepo = AppDataSource.getRepository(User);
 
-    const door = await doorRepo.findOneBy({ code });
-    if(!door) throw new AppError("Invalid code", 404);
-
-    const user = await userRepo.findOneBy({ userId: userId });
-    if(!user) throw new AppError("User not found", 404);
-
-    door.user = user;
-    return await doorRepo.save(door);
+    const door = doorRepo.findOneBy({ userId, petDoorId });
+    if(!door) throw new AppError("Door not found", 404);
+    
+    return await doorRepo.save({ ...door, ...payload });
 }
 
-export const updateDoorService = async (userId:string, doorId:string, payload:TDoorUpdate) => {
-
-    const doorRepo = AppDataSource.getRepository(PetDoor);
-    const userRepo = AppDataSource.getRepository(User);
-
-    const user = await userRepo.findOneBy({ userId: userId });
-    if(!user) throw new AppError("User not found");
-
-    if(!doorRepo.existsBy({ petDoorId: doorId, user }))
-        throw new AppError("Door not found", 404);
-    
-    await doorRepo.update({ petDoorId: doorId }, payload);
-}
-
-export const getDoorsService = async (id:string): Promise<PetDoor[]> => {
-
-    const userRepo = AppDataSource.getRepository(User);
-
-    const user = await userRepo.findOne({ 
-        where: { userId: id },
-        relations: { doors: true } 
-    })
-    if(!user) throw new AppError("User not found");
-
-    return user.doors || [];
+export const getDoorsService = async (userId:string) => {
+    return await AppDataSource.getRepository(PetDoor).find({
+        where: { userId }
+    });
 }

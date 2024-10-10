@@ -8,7 +8,7 @@ export default class PetDoor {
     @PrimaryGeneratedColumn("uuid")
     petDoorId?: string;
 
-    @Column({ type: "varchar", length: 50 })
+    @Column({ type: "varchar", length: 30, default: "New Door" })
     nickname?: string;
 
     @Column({ type: "boolean", default: false })

@@ -2,61 +2,50 @@ import AppDataSource from "../data-source"
 import Pet from "../entities/Pet.entity";
 import PetDoor from "../entities/PetDoor.entity"
 import AppError from "../errors";
-import { createPetService } from "./pets.services";
 import DoorPermission from "../entities/DoorPermission.entity";
-import PermissionRange from "../entities/PermissionRange.entity";
 
-export const ensureEspRegister = async (id:string) => {
-
+export const registerEsp = async (userId:string) => {
     const repo = AppDataSource.getRepository(PetDoor);
 
-    const door = await repo.findOneBy({ petDoorId: id });
-    if(door) return;
-
-    const newDoor = repo.create({ petDoorId: id });
-    await repo.save(newDoor);
+    const newDoor = repo.create({ userId });
+    return await repo.save(newDoor);
 }
 
-export const readPetTagService = async (id:string, hash:string): Promise<void> => {
+export const readPetTagService = async (petDoorId:string, userId:string, hash:string): Promise<void> => {
 
     const petRepo = AppDataSource.getRepository(Pet);
     const doorRepo = AppDataSource.getRepository(PetDoor);
     
-    const door = await doorRepo.findOne({ where: { petDoorId: id }, relations: { user: true } });
-    const pet = await petRepo.findOneBy({ id: hash })
+    const door = await doorRepo.findOne({ where: { petDoorId, userId } });
 
     if(!door) throw new AppError("Door not found.", 404);
     if(door.freeAccess) return;
 
+    const pet = await petRepo.findOneBy({ petId: hash })
     if(!pet) {
-        if(!door.user) throw new AppError("Door doesn't have a owner yet.");
-        
-        const numberOfPets = await petRepo.countBy({ user: door!.user })
-        await createPetService(door.user!.userId!, { name: `Pet ${numberOfPets + 1}`, id: hash })
-        
+        petRepo.save({ petId: hash, userId })
         throw new AppError("New Pet created, access app for details.", 401);
     }
     
     const permissionRepo = AppDataSource.getRepository(DoorPermission);
     
-    const permission = await permissionRepo.findOneBy({ pet: pet, petDoor: door });
+    const permission = await permissionRepo.findOne({
+        where: { pet: pet, petDoorId },
+        relations: { ranges: true }
+    });
     if(!permission) throw new AppError("Pet does not have permission", 403);
-    
-    const rangeRepo = AppDataSource.getRepository(PermissionRange);
-    
-    const ranges = await rangeRepo.findBy({ doorPermission: permission });
-    if(ranges.length < 1) return;
+    if(permission.ranges!.length < 1) return;
 
     const hours = new Date().getHours();
     const minutes = new Date().getMinutes();
     
-    for (let i = 0; i < ranges.length; i++) {
-        const range = ranges[i];
+    for (let i = 0; i < permission.ranges!.length; i++) {
+        const range = permission.ranges![i];
         
         if(
             (   
-                range.begginingHour! < hours ||
-                (range.begginingHour! == hours && range.begginingMinute! <= minutes)
+                range.startHour! < hours ||
+                (range.startHour! == hours && range.startMinute! <= minutes)
             ) &&
             (   
                 range.endHour! > hours ||

@@ -8,6 +8,6 @@ export const createUserController = async (req:Request, res:Response) => {
 }
 
 export const getUserController = async (req:Request, res:Response) => {
-    const service = await getUserService(req.params.userId);
+    const service = await getUserService(res.locals.userId);
     return res.status(200).json(service);
 }

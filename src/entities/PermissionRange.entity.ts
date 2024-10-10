@@ -5,13 +5,13 @@ import DoorPermission from "./DoorPermission.entity";
 export default class PermissionRange {
 
     @PrimaryGeneratedColumn("uuid")
-    id?: string;
+    permissionRangeId?: string;
 
     @Column({ type: "smallint" })
-    begginingHour?: number;
+    startHour?: number;
 
     @Column({ type: "smallint" })
-    begginingMinute?: number;
+    startMinute?: number;
 
     @Column({ type: "smallint" })
     endHour?: number;
