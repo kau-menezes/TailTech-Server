@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { readTagController, registerEspController } from "../controllers/esp.controller";
+import { readTagController, registerEspController } from "../controllers/esp.controllers";
 
 const espRouter = Router();
 
-espRouter.get("/users/:userId", registerEspController);
+espRouter.get("", registerEspController);
 espRouter.get("/pet/:petId", readTagController);
 
 export default espRouter;
