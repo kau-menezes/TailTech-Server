@@ -7,6 +7,6 @@ export const registerEspController = async (req:Request, res:Response) => {
 }
 
 export const readTagController = async (req:Request, res:Response) => {
-    await readPetTagService(req.params.petDoorId, req.params.userId, req.params.petId);
+    await readPetTagService(req.params.authorization, req.params.petId);
     return res.status(204).send();
 }
