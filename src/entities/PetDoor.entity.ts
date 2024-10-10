@@ -14,13 +14,13 @@ export default class PetDoor {
     @Column({ type: "boolean", default: false })
     freeAccess?: boolean;
 
-    @Column({ type: "varchar", length: 255 })
+    @Column()
     userId?: string;
 
     @ManyToOne(() => User, (u) => u.doors, { cascade: true, onDelete: "CASCADE" })
     @JoinColumn({ name: "userId" })
     user?: User;
 
-    @OneToMany(() => DoorPermission, (dp) => dp.petDoor, { cascade: true, onDelete: "CASCADE" })
+    @OneToMany(() => DoorPermission, (dp) => dp.petDoor)
     permissions?: DoorPermission[];
 }

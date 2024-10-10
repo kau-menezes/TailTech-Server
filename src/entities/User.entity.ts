@@ -22,13 +22,13 @@ export default class User {
     @Column({ type: 'date' })
     birthdate?: string;
     
-    @OneToMany(() => Pet, (pet) => pet.user, { cascade: true, onDelete: "CASCADE" })
+    @OneToMany(() => Pet, (pet) => pet.user)
     pets?: Pet[];
 
-    @OneToMany(() => PetDoor, (door) => door.user, { cascade: true, onDelete: "CASCADE" })
+    @OneToMany(() => PetDoor, (door) => door.user)
     doors?: PetDoor[];
 
-    @OneToMany(() => Notification, (n) => n.user, { cascade: true, onDelete: "CASCADE" })
+    @OneToMany(() => Notification, (n) => n.user)
     notifications?: Notification[];
 
     @BeforeInsert()

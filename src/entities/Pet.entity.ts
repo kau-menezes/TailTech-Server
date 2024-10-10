@@ -14,13 +14,13 @@ export default class Pet {
     @Column({ type: "varchar", length: 255, nullable: true })
     pictureUrl?: string | null;
 
-    @Column({ type: "varchar", length: 255 })
+    @Column()
     userId?: string;
 
     @ManyToOne(() => User, (u) => u.pets, { cascade: true, onDelete: "CASCADE" })
     @JoinColumn({ name: "userId" })
     user?: User;
 
-    @OneToMany(() => DoorPermission, (dp) => dp.pet, { cascade: true, onDelete: "CASCADE" })
+    @OneToMany(() => DoorPermission, (dp) => dp.pet)
     permissions?: DoorPermission[];
 }

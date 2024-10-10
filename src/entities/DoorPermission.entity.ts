@@ -23,6 +23,6 @@ export default class DoorPermission {
     @JoinColumn({ name: "petDoorId" })
     petDoor?: PetDoor;
 
-    @OneToMany(() => PermissionRange, (pr) => pr.doorPermission, { cascade: true, onDelete: "CASCADE" })
+    @OneToMany(() => PermissionRange, (pr) => pr.doorPermission)
     ranges?: PermissionRange[];
 }
