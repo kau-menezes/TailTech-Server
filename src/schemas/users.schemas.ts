@@ -9,3 +9,11 @@ export const createUserSchema = z.object({
 }).strict();
 
 export type IUserCreation = z.infer<typeof createUserSchema>;
+
+
+export const loginSchema = z.object({
+    email: z.string(),
+    password: z.string()
+}).strict();
+
+export type ILoginPayload = z.infer<typeof loginSchema>;
