@@ -1,9 +1,14 @@
 import { Request, Response } from "express";
-import { deletePetService, getPetsService, updatePetService } from "../services/pets.services";
+import { deletePetService, getPetsService, getPetToRegisterService, updatePetService } from "../services/pets.services";
 
 
-export const getPetController = async (req:Request, res:Response) => {
+export const getPetsController = async (req:Request, res:Response) => {
     const service = await getPetsService(res.locals.userId);
+    return res.status(200).json(service);
+}
+
+export const getPetToRegisterController = async (req:Request, res:Response) => {
+    const service = await getPetToRegisterService(res.locals.userId);
     return res.status(200).json(service);
 }
 

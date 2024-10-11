@@ -5,38 +5,40 @@ import AppError from "../errors";
 import DoorPermission from "../entities/DoorPermission.entity";
 import { sign, verify } from "jsonwebtoken";
 
-export const registerEsp = async (token:string) => {
-
+export const registerEsp = async (bearer:string) => {
+    
+    const [_, token] = bearer.split(" ");
     let userId:string = "";
 
     verify(token, String(process.env.SECRET_KEY),
         (err:any, decoded:any) => {
             if(err) throw new AppError(err.message, 401);
-            userId = decoded.userId;
+            userId = decoded.sub;
         }
     )
 
     const repo = AppDataSource.getRepository(PetDoor);
 
-    const creation = repo.create({ userId: token });
+    const creation = repo.create({ userId });
     const door = await repo.save(creation);
 
-    return sign(
-        { petDoorId: door.petDoorId, userId: token }, 
+    const doorToken = sign(
+        { petDoorId: door.petDoorId, userId }, 
         String(process.env.SECRET_KEY),
         {}
     )
+    return { token: doorToken }
 }
 
-export const readPetTagService = async (token:string, hash:string) => {
+export const readPetTagService = async (bearer:string, hash:string) => {
     
+    const [_, token] = bearer.split(" ");
     let petDoorId:string = "";
     let userId:string = "";
     
     verify(token, String(process.env.SECRET_KEY), 
         async (err:any, decoded:any) => {
             if(err) throw new AppError(err.message, 401);
-
             petDoorId = decoded.petDoorId;
             userId = decoded.userId;
         }
@@ -45,7 +47,11 @@ export const readPetTagService = async (token:string, hash:string) => {
     const petRepo = AppDataSource.getRepository(Pet);
     const doorRepo = AppDataSource.getRepository(PetDoor);
     
+    console.log("aqwui");
+    console.log(petDoorId);
+    console.log(userId);
     const door = await doorRepo.findOne({ where: { petDoorId, userId } });
+    
 
     if(!door) throw new AppError("Door not found.", 404);
     if(door.freeAccess) return;
