@@ -19,14 +19,22 @@ export const getPetToRegisterService = async (userId:string) => {
     return pet;
 }
 
-export const updatePetService = async (petId:string, userId:string, payload:IPetUpdate, pictureUrl?:string) => {
+export const updatePetService = async (petId:string, userId:string, payload:IPetUpdate) => {
     const repo = AppDataSource.getRepository(Pet);
 
     const pet = await repo.findOneBy({ petId, userId });
     if(!pet) throw new AppError("Pet not found", 404);
 
-    if(pictureUrl) pet.pictureUrl = pictureUrl;
-    await repo.save({ ...pet, ...payload });
+    return await repo.save({ ...pet, ...payload });
+}
+
+export const updatePetPictureService = async (petId:string, userId:string, pictureUrl:string) => {
+    const repo = AppDataSource.getRepository(Pet);
+
+    const pet = await repo.findOneBy({ petId, userId });
+    if(!pet) throw new AppError("Pet not found", 404);
+
+    return await repo.save({ ...pet, pictureUrl });
 }
 
 export const deletePetService = async (petId:string, userId:string) => {

@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(cors());
 
-app.use("/files/uploads", e.static(path.join(__dirname, "./uploads")))
+app.use("/photos", e.static(path.join(__dirname, "../uploads")))
 
 app.use("/api/users", userRouter);
 app.use("/api/login", loginRouter);
