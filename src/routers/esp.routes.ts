@@ -3,7 +3,7 @@ import { readTagController, registerEspController } from "../controllers/esp.con
 
 const espRouter = Router();
 
-espRouter.get("", registerEspController);
+espRouter.post("", registerEspController);
 espRouter.get("/pet/:petId", readTagController);
 
 export default espRouter;
