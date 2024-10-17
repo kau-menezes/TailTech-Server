@@ -1,6 +1,6 @@
 import AppDataSource from "../data-source"
 import DoorPermission from "../entities/DoorPermission.entity";
-import PermissionRange from "../entities/PermissionRange.entity";
+import BlockRange from "../entities/BlockRange.entity";
 import Pet from "../entities/Pet.entity";
 import PetDoor from "../entities/PetDoor.entity";
 import AppError from "../errors";
@@ -19,7 +19,7 @@ export const updatePetPermissionsService = async (petId:string, petDoorId:string
     const permissionRepo = AppDataSource.getRepository(DoorPermission);
     const petRepo = AppDataSource.getRepository(Pet);
     const doorRepo = AppDataSource.getRepository(PetDoor);
-    const rangeRepo = AppDataSource.getRepository(PermissionRange);
+    const rangeRepo = AppDataSource.getRepository(BlockRange);
 
     const pet = await petRepo.findOneBy({ petId });
     if(!pet) throw new AppError("Pet not found", 404);
@@ -41,7 +41,7 @@ export const updatePetPermissionsService = async (petId:string, petDoorId:string
         permission = permissionRepo.create({ petId, petDoorId });
     }
     permission.ranges = payload.ranges?.map(r => rangeRepo.create({ 
-        ...r, doorPermissionId: permission.doorPermissionId }));
+        ...r, petDoorId: permission.doorPermissionId }));
 
     return await permissionRepo.save(permission);
 }

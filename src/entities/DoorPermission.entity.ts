@@ -1,28 +1,21 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import Pet from "./Pet.entity";
 import PetDoor from "./PetDoor.entity";
-import PermissionRange from "./PermissionRange.entity";
 
 @Entity("door_permissions")
 export default class DoorPermission {
 
-    @PrimaryGeneratedColumn("uuid")
-    doorPermissionId?: string;
-
-    @Column()
+    @PrimaryColumn()
     petId?: string;
 
     @ManyToOne(() => Pet, (p) => p.permissions, { cascade: true, onDelete: "CASCADE" })
     @JoinColumn({ name: "petId" })
     pet?: Pet;
 
-    @Column()
+    @PrimaryColumn()
     petDoorId?: string;
 
     @ManyToOne(() => PetDoor, (pd) => pd.permissions, { cascade: true, onDelete: "CASCADE" })
     @JoinColumn({ name: "petDoorId" })
     petDoor?: PetDoor;
-
-    @OneToMany(() => PermissionRange, (pr) => pr.doorPermission)
-    ranges?: PermissionRange[];
 }

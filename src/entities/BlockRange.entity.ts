@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import DoorPermission from "./DoorPermission.entity";
+import PetDoor from "./PetDoor.entity";
 
-@Entity("permission_ranges")
-export default class PermissionRange {
+@Entity("block_ranges")
+export default class BlockRange {
 
     @PrimaryGeneratedColumn("uuid")
     permissionRangeId?: string;
@@ -20,9 +20,9 @@ export default class PermissionRange {
     endMinute?: number;
 
     @Column()
-    doorPermissionId?: string;
+    petDoorId?: string;
 
-    @ManyToOne(() => DoorPermission, (dp) => dp.ranges, { cascade: true, onDelete: "CASCADE" })
-    @JoinColumn({ name: "doorPermissionId" })
-    doorPermission?: DoorPermission;
+    @ManyToOne(() => PetDoor, (pd) => pd.blockRanges, { cascade: true, onDelete: "CASCADE" })
+    @JoinColumn({ name: "petDoorId" })
+    petDoor?: PetDoor;
 }
