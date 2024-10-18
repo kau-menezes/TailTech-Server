@@ -1,47 +1,34 @@
 import AppDataSource from "../data-source"
 import DoorPermission from "../entities/DoorPermission.entity";
-import BlockRange from "../entities/BlockRange.entity";
-import Pet from "../entities/Pet.entity";
 import PetDoor from "../entities/PetDoor.entity";
 import AppError from "../errors";
-import { IPetPermissionUpdate } from "../schemas/permissions.schemas";
+import { IDoorBlockRangeUpdate, IPetPermissionUpdate } from "../schemas/permissions.schemas";
 
 
-export const getPetPermissionService = async (petId:string, petDoorId:string) => {
+export const getDoorPermissionDetailsService = async (petDoorId:string) => {
     return await AppDataSource.getRepository(DoorPermission).findOne({
-        where: { petId, petDoorId },
-        relations: { ranges: true }
+        where: { petDoorId },
     })
 }
 
-export const updatePetPermissionsService = async (petId:string, petDoorId:string, payload:IPetPermissionUpdate) => {
+export const updateDoorBlockRangesService = async (petDoorId:string, payload:IDoorBlockRangeUpdate) => {
+    const repo = AppDataSource.getRepository(PetDoor);
 
-    const permissionRepo = AppDataSource.getRepository(DoorPermission);
-    const petRepo = AppDataSource.getRepository(Pet);
-    const doorRepo = AppDataSource.getRepository(PetDoor);
-    const rangeRepo = AppDataSource.getRepository(BlockRange);
-
-    const pet = await petRepo.findOneBy({ petId });
-    if(!pet) throw new AppError("Pet not found", 404);
-    
-    const petDoor = await doorRepo.findOneBy({ petDoorId });
-    if(!petDoor) throw new AppError("Door not found", 404);
-
-    let permission = await permissionRepo.findOne({
-        where: { petId, petDoorId },
-        relations: { ranges: true }
+    const door = await repo.findOne({
+        where: { petDoorId },
+        relations: { blockRanges: true },
     });
+    if(!door) throw new AppError("Door not found", 404);
 
-    if(!payload.permission && permission) {
-        await permissionRepo.remove(permission);
-        return;
+    return repo.save({ ...door, blockRanges: payload })
+}
+
+export const updatePetPermissionsService = async (petId:string, petDoorId:string, payload:IPetPermissionUpdate) => {
+    const repo = AppDataSource.getRepository(DoorPermission);
+    
+    if(payload) {
+        await repo.save({ petId, petDoorId });
+        return
     }
-
-    if(!permission) {
-        permission = permissionRepo.create({ petId, petDoorId });
-    }
-    permission.ranges = payload.ranges?.map(r => rangeRepo.create({ 
-        ...r, petDoorId: permission.doorPermissionId }));
-
-    return await permissionRepo.save(permission);
+    await repo.remove({ petId, petDoorId });
 }

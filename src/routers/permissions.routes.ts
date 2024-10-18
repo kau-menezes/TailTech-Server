@@ -1,14 +1,15 @@
-import { Router } from "express";
+import { getDoorPermissionDetailsControllerr, updateDoorBlockRangesController, updatePetPermissionsController } from "../controllers/permissions.controllers";
+import { updateDoorBlockRangesSchema, updatePetPermissionSchema } from "../schemas/permissions.schemas";
 import authenticate from "../middlewares/authenticate.middleware";
-import { getPetPermissionsControllerr, updatePetPermissionsControllerr } from "../controllers/permissions.controllers";
 import validateBody from "../middlewares/validateBody.middleware";
-import { updatePetPermissionSchema } from "../schemas/permissions.schemas";
+import { Router } from "express";
 
 const permissionRouter = Router();
 
 permissionRouter.use(authenticate);
 
-permissionRouter.get("/pets/:petId/pet-doors/:petDoorId", getPetPermissionsControllerr)
-permissionRouter.patch("/pets/:petId/pet-doors/:petDoorId", validateBody(updatePetPermissionSchema), updatePetPermissionsControllerr)
+permissionRouter.get("/pet-doors/:petDoorId", getDoorPermissionDetailsControllerr)
+permissionRouter.patch("/pet-doors/:petDoorId", validateBody(updateDoorBlockRangesSchema), updateDoorBlockRangesController)
+permissionRouter.patch("/pet-doors/:petDoorId/pets/:petId", validateBody(updatePetPermissionSchema), updatePetPermissionsController)
 
 export default permissionRouter;

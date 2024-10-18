@@ -4,6 +4,7 @@ import PetDoor from "../entities/PetDoor.entity"
 import AppError from "../errors";
 import DoorPermission from "../entities/DoorPermission.entity";
 import { sign, verify } from "jsonwebtoken";
+import BlockRange from "../entities/BlockRange.entity";
 
 export const registerEsp = async (bearer:string) => {
     
@@ -30,7 +31,7 @@ export const registerEsp = async (bearer:string) => {
     return { token: doorToken }
 }
 
-export const readPetTagService = async (bearer:string, hash:string) => {
+export const readPetTagService = async (bearer:string, petId:string) => {
     
     const [_, token] = bearer.split(" ");
     let petDoorId:string = "";
@@ -47,46 +48,34 @@ export const readPetTagService = async (bearer:string, hash:string) => {
     const petRepo = AppDataSource.getRepository(Pet);
     const doorRepo = AppDataSource.getRepository(PetDoor);
     
-    console.log("aqwui");
-    console.log(petDoorId);
-    console.log(userId);
     const door = await doorRepo.findOne({ where: { petDoorId, userId } });
-    
-
     if(!door) throw new AppError("Door not found.", 404);
-    if(door.freeAccess) return;
 
-    const pet = await petRepo.findOneBy({ petId: hash })
+    const pet = await petRepo.findOneBy({ petId })
     if(!pet) {
-        petRepo.save({ petId: hash, userId })
-        throw new AppError("New Pet created, access app for details.", 401);
+        petRepo.save({ petId, userId })
+        throw new AppError("New Pet detected, access app for details.", 401);
     }
     
-    const permissionRepo = AppDataSource.getRepository(DoorPermission);
-    
-    const permission = await permissionRepo.findOne({
-        where: { pet: pet, petDoorId },
-        relations: { ranges: true }
-    });
-    if(!permission) throw new AppError("Pet does not have permission", 403);
-    if(permission.ranges!.length < 1) return;
+    const permission = await AppDataSource
+        .getRepository(DoorPermission)
+        .findOneBy({ petDoorId, petId });
+    if(!permission) throw new AppError("That pet cannot go through that door", 401);
 
-    const hours = new Date().getHours();
-    const minutes = new Date().getMinutes();
-    
-    for (let i = 0; i < permission.ranges!.length; i++) {
-        const range = permission.ranges![i];
-        
-        if(
-            (   
-                range.startHour! < hours ||
-                (range.startHour! == hours && range.startMinute! <= minutes)
-            ) &&
-            (   
-                range.endHour! > hours ||
-                (range.endHour! == hours && range.endMinute! >= minutes)
-            )
-        ) return;
-    }
-    throw new AppError("Invalid access", 403);
+    const hour = new Date().getHours();
+    const minute = new Date().getMinutes();
+
+    const block = await AppDataSource
+        .getRepository(BlockRange)
+        .createQueryBuilder("br")
+        .where(
+            "br.startHour < :hour1 OR (br.startHour = :hour2 AND br.startMinute <= :minute)", 
+            { hour1: hour, hour2: hour, minute }
+        )
+        .andWhere(
+            "br.endHour > :hour1 OR (br.endHour = :hour2 AND br.endMinute >= :minute)", 
+            { hour1: hour, hour2: hour, minute }
+        )
+        .getExists();
+    if(block) throw new AppError("Door is blocked at this time", 401);
 }
