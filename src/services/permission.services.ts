@@ -1,14 +1,31 @@
 import AppDataSource from "../data-source"
+import BlockRange from "../entities/BlockRange.entity";
 import DoorPermission from "../entities/DoorPermission.entity";
+import Pet from "../entities/Pet.entity";
 import PetDoor from "../entities/PetDoor.entity";
 import AppError from "../errors";
 import { IDoorBlockRangeUpdate, IPetPermissionUpdate } from "../schemas/permissions.schemas";
 
 
-export const getDoorPermissionDetailsService = async (petDoorId:string) => {
-    return await AppDataSource.getRepository(DoorPermission).findOne({
-        where: { petDoorId },
-    })
+export const getDoorPermissionDetailsService = async (petDoorId:string, userId:string) => {
+    const foundDoor = await AppDataSource.getRepository(PetDoor).existsBy({ petDoorId })
+    if(!foundDoor) throw new AppError("Door not found", 404)
+
+    const blockRanges = await AppDataSource.getRepository(BlockRange).findBy({ petDoorId });
+    const pets = await AppDataSource.getRepository(Pet).find({
+        where: { userId },
+        relations: { permissions: true }
+    });
+
+    const petsWithPermissionField = pets.map(pet => ({
+        petId: pet.petId,
+        name: pet.name,
+        hasPermission: Number(pet.permissions?.findIndex(
+            permission => permission.petDoorId == petDoorId
+        )) >= 0,
+    }))
+
+    return { blockRanges, pets: petsWithPermissionField }
 }
 
 export const updateDoorBlockRangesService = async (petDoorId:string, payload:IDoorBlockRangeUpdate) => {
@@ -26,9 +43,11 @@ export const updateDoorBlockRangesService = async (petDoorId:string, payload:IDo
 export const updatePetPermissionsService = async (petId:string, petDoorId:string, payload:IPetPermissionUpdate) => {
     const repo = AppDataSource.getRepository(DoorPermission);
     
-    if(payload) {
+    if(payload.permission) {
         await repo.save({ petId, petDoorId });
         return
     }
-    await repo.remove({ petId, petDoorId });
+    const permission = await repo.findOneBy({ petId, petDoorId });
+    if(!permission) return;
+    await repo.remove(permission);
 }

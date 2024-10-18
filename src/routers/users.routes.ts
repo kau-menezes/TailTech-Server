@@ -7,6 +7,6 @@ import { createUserSchema } from "../schemas/users.schemas";
 const userRouter = Router();
 
 userRouter.post("", validateBody(createUserSchema), createUserController);
-userRouter.get("/:userId", authenticate, getUserController);
+userRouter.get("", authenticate, getUserController);
 
 export default userRouter;

@@ -5,12 +5,12 @@ import { IPetDoorUpdate } from "../schemas/doors.schemas";
 
 
 export const updateDoorService = async (userId:string, petDoorId:string, payload:IPetDoorUpdate) => {
-    const doorRepo = AppDataSource.getRepository(PetDoor);
+    const repo = AppDataSource.getRepository(PetDoor);
 
-    const door = doorRepo.findOneBy({ userId, petDoorId });
+    const door = await repo.findOneBy({ userId, petDoorId });
     if(!door) throw new AppError("Door not found", 404);
     
-    return await doorRepo.save({ ...door, ...payload });
+    return await repo.save({ ...door, ...payload });
 }
 
 export const getDoorsService = async (userId:string) => {

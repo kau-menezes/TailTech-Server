@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { getDoorPermissionDetailsService, updateDoorBlockRangesService, updatePetPermissionsService } from "../services/permission.services";
 
 export const getDoorPermissionDetailsControllerr = async (req:Request, res:Response) => {
-    const permissions = await getDoorPermissionDetailsService(req.params.petDoorId);
+    const permissions = await getDoorPermissionDetailsService(req.params.petDoorId, res.locals.userId);
     return res.status(200).json(permissions);
 }
 

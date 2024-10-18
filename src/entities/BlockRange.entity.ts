@@ -22,7 +22,7 @@ export default class BlockRange {
     @Column()
     petDoorId?: string;
 
-    @ManyToOne(() => PetDoor, (pd) => pd.blockRanges, { cascade: true, onDelete: "CASCADE" })
+    @ManyToOne(() => PetDoor, (pd) => pd.blockRanges)
     @JoinColumn({ name: "petDoorId" })
     petDoor?: PetDoor;
 }

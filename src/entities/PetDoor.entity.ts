@@ -22,6 +22,6 @@ export default class PetDoor {
     @OneToMany(() => DoorPermission, (dp) => dp.petDoor)
     permissions?: DoorPermission[];
 
-    @OneToMany(() => BlockRange, (br) => br.petDoor)
+    @OneToMany(() => BlockRange, (br) => br.petDoor, { cascade: true, onDelete: "CASCADE" })
     blockRanges?: BlockRange[];
 }
