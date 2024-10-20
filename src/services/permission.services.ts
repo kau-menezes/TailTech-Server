@@ -32,15 +32,17 @@ export const getDoorPermissionDetailsService = async (petDoorId:string, userId:s
 }
 
 export const updateDoorBlockRangesService = async (petDoorId:string, payload:IDoorBlockRangeUpdate) => {
-    const repo = AppDataSource.getRepository(PetDoor);
+    const doorRepo = AppDataSource.getRepository(PetDoor);
+    const blockRepo = AppDataSource.getRepository(BlockRange);
 
-    const door = await repo.findOne({
+    const door = await doorRepo.findOne({
         where: { petDoorId },
         relations: { blockRanges: true },
     });
     if(!door) throw new AppError("Door not found", 404);
 
-    return repo.save({ ...door, blockRanges: payload })
+    blockRepo.delete({ petDoorId })
+    return doorRepo.save({ ...door, blockRanges: payload })
 }
 
 export const updatePetPermissionsService = async (petId:string, petDoorId:string, payload:IPetPermissionUpdate) => {
