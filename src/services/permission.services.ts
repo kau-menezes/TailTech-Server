@@ -11,7 +11,10 @@ export const getDoorPermissionDetailsService = async (petDoorId:string, userId:s
     const foundDoor = await AppDataSource.getRepository(PetDoor).existsBy({ petDoorId })
     if(!foundDoor) throw new AppError("Door not found", 404)
 
-    const blockRanges = await AppDataSource.getRepository(BlockRange).findBy({ petDoorId });
+    const blockRanges = await AppDataSource.getRepository(BlockRange).find({
+        select: { startHour: true, startMinute: true, endHour: true, endMinute: true },
+        where: { petDoorId },
+    });
     const pets = await AppDataSource.getRepository(Pet).find({
         where: { userId },
         relations: { permissions: true }
