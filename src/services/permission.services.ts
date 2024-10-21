@@ -4,7 +4,7 @@ import DoorPermission from "../entities/DoorPermission.entity";
 import Pet from "../entities/Pet.entity";
 import PetDoor from "../entities/PetDoor.entity";
 import AppError from "../errors";
-import { IDoorBlockRangeUpdate, IPetPermissionUpdate } from "../schemas/permissions.schemas";
+import { IDoorBlockRangeCreation, IPetPermissionUpdate } from "../schemas/permissions.schemas";
 
 
 export const getDoorPermissionDetailsService = async (petDoorId:string, userId:string) => {
@@ -12,7 +12,7 @@ export const getDoorPermissionDetailsService = async (petDoorId:string, userId:s
     if(!foundDoor) throw new AppError("Door not found", 404)
 
     const blockRanges = await AppDataSource.getRepository(BlockRange).find({
-        select: { startHour: true, startMinute: true, endHour: true, endMinute: true },
+        select: { startHour: true, startMinute: true, endHour: true, endMinute: true, blockRangeId: true },
         where: { petDoorId },
     });
     const pets = await AppDataSource.getRepository(Pet).find({
@@ -31,18 +31,19 @@ export const getDoorPermissionDetailsService = async (petDoorId:string, userId:s
     return { blockRanges, pets: petsWithPermissionField }
 }
 
-export const updateDoorBlockRangesService = async (petDoorId:string, payload:IDoorBlockRangeUpdate) => {
+export const createDoorBlockRangesService = async (petDoorId:string, payload:IDoorBlockRangeCreation) => {
     const doorRepo = AppDataSource.getRepository(PetDoor);
-    const blockRepo = AppDataSource.getRepository(BlockRange);
 
-    const door = await doorRepo.findOne({
-        where: { petDoorId },
-        relations: { blockRanges: true },
-    });
-    if(!door) throw new AppError("Door not found", 404);
+    const found = await doorRepo.existsBy({ petDoorId });
+    if(!found) throw new AppError("Door not found", 404);
 
-    blockRepo.delete({ petDoorId })
-    return doorRepo.save({ ...door, blockRanges: payload })
+    return await AppDataSource
+        .getRepository(BlockRange)
+        .save({ ...payload, petDoorId })
+}
+
+export const deleteDoorBlockRangeService = async (blockRangeId:string) => {
+    await AppDataSource.getRepository(BlockRange).delete({ blockRangeId });
 }
 
 export const updatePetPermissionsService = async (petId:string, petDoorId:string, payload:IPetPermissionUpdate) => {

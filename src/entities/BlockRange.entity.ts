@@ -5,7 +5,7 @@ import PetDoor from "./PetDoor.entity";
 export default class BlockRange {
 
     @PrimaryGeneratedColumn("uuid")
-    permissionRangeId?: string;
+    blockRangeId?: string;
 
     @Column({ type: "smallint" })
     startHour?: number;
