@@ -53,7 +53,7 @@ export const readPetTagService = async (bearer:string, petId:string) => {
 
     const pet = await petRepo.findOneBy({ petId })
     if(!pet) {
-        petRepo.save({ petId, userId })
+        await petRepo.save({ petId, userId })
         throw new AppError("New Pet detected, access app for details.", 401);
     }
     
