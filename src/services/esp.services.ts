@@ -28,7 +28,7 @@ export const registerEsp = async (bearer:string) => {
         String(process.env.SECRET_KEY),
         {}
     )
-    return { token: doorToken }
+    return doorToken 
 }
 
 export const readPetTagService = async (bearer:string, petId:string) => {
