@@ -7,7 +7,8 @@ import { IPetUpdate } from "../schemas/pets.schemas";
 
 export const getPetsService = async (userId:string) => {
     return await AppDataSource.getRepository(Pet).find({
-        where: { userId, name: Not(IsNull()) }
+        where: { userId, name: Not(IsNull()) },
+        order: { petId: "ASC" }
     });
 }
 
