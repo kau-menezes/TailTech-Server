@@ -1,3 +1,4 @@
+import { IsNull, Not } from "typeorm";
 import AppDataSource from "../data-source"
 import BlockRange from "../entities/BlockRange.entity";
 import DoorPermission from "../entities/DoorPermission.entity";
@@ -16,7 +17,7 @@ export const getDoorPermissionDetailsService = async (petDoorId:string, userId:s
         where: { petDoorId },
     });
     const pets = await AppDataSource.getRepository(Pet).find({
-        where: { userId },
+        where: { userId, name: Not(IsNull()) },
         relations: { permissions: true }
     });
 
