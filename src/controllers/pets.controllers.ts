@@ -1,15 +1,20 @@
 import { Request, Response } from "express";
-import { deletePetService, getPetsService, getPetToRegisterService, updatePetPictureService, updatePetService } from "../services/pets.services";
+import { deletePetService, getPetByIdService, getPetsService, getPetToRegisterService, updatePetPictureService, updatePetService } from "../services/pets.services";
 
 
 export const getPetsController = async (req:Request, res:Response) => {
-    const service = await getPetsService(res.locals.userId);
-    return res.status(200).json(service);
+    const pets = await getPetsService(res.locals.userId);
+    return res.status(200).json(pets);
+}
+
+export const getPetByIdController = async (req:Request, res:Response) => {
+    const pet = await getPetByIdService(res.locals.userId, req.params.petId);
+    return res.status(200).json(pet);
 }
 
 export const getPetToRegisterController = async (req:Request, res:Response) => {
-    const service = await getPetToRegisterService(res.locals.userId);
-    return res.status(200).json(service);
+    const pet = await getPetToRegisterService(res.locals.userId);
+    return res.status(200).json(pet);
 }
 
 export const updatePetController = async (req:Request, res:Response) => {

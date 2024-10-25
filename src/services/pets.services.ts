@@ -12,6 +12,12 @@ export const getPetsService = async (userId:string) => {
     });
 }
 
+export const getPetByIdService = async (userId:string, petId:string) => {
+    const pet = await AppDataSource.getRepository(Pet).findOneBy({ userId, petId }); 
+    if(!pet) throw new AppError("Pet not found", 404);
+    return pet
+}
+
 export const getPetToRegisterService = async (userId:string) => {
     const pet = await AppDataSource.getRepository(Pet).findOne({
         where: { userId, name: IsNull() }
