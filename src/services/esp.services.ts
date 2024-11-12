@@ -5,6 +5,7 @@ import AppError from "../errors";
 import DoorPermission from "../entities/DoorPermission.entity";
 import { sign, verify } from "jsonwebtoken";
 import BlockRange from "../entities/BlockRange.entity";
+import Notification from "../entities/Notification.entity";
 
 export const registerEsp = async (bearer:string) => {
     
@@ -78,4 +79,7 @@ export const readPetTagService = async (bearer:string, petId:string) => {
         )
         .getExists();
     if(block) throw new AppError("Door is blocked at this time", 401);
+
+    const notificationsRepo = AppDataSource.getRepository(Notification);
+    await notificationsRepo.save({ userId, content: `${pet.name} went through the ${door.nickname} door`})
 }

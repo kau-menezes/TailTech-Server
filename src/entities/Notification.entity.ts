@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import User from "./User.entity";
 
 @Entity("notifications")
@@ -15,6 +15,9 @@ export default class Notification {
 
     @Column()
     userId?: string;
+
+    @CreateDateColumn()
+    createdAt?: Date;
 
     @ManyToOne(() => User, (u) => u.notifications, { cascade: true, onDelete: "CASCADE" })
     @JoinColumn({ name: "userId" })
